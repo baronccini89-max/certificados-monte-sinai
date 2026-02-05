@@ -563,6 +563,29 @@
             color: white;
         }
 
+        /* STATS */
+        .stat-box {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 0.95em;
+            color: #666;
+            font-weight: 500;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .main-content {
@@ -675,6 +698,7 @@
             <li><button class="nav-btn active" data-section="certificates" onclick="switchSection('certificates')">📜 Certificados</button></li>
             <li id="navManage" style="display:none;"><button class="nav-btn" data-section="manage" onclick="switchSection('manage')">⚙️ Gerenciar Dados</button></li>
             <li id="navUsers" style="display:none;"><button class="nav-btn" data-section="users" onclick="switchSection('users')">👥 Usuários</button></li>
+            <li id="navReports" style="display:none;"><button class="nav-btn" data-section="reports" onclick="switchSection('reports')">📊 Relatórios</button></li>
         </ul>
     </nav>
 
@@ -692,7 +716,579 @@
                 <div class="grid grid-2">
                     <div class="form-group">
                         <label for="certSession">Sessão:</label>
-                        <select id="certSession" onchange="updateCertPreview()" required>
+                        <input type="text" id="certSession" placeholder="Ex: Sessão Ordinária" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="certDate">Data do Certificado:</label>
+                        <input type="date" id="certDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="certType">Tipo de Certificado:</label>
+                        <select id="certType" required>
+                            <option value="">Selecione um tipo</option>
+                            <option value="attendance">Certificado de Presença</option>
+                            <option value="completion">Certificado de Conclusão</option>
+                            <option value="participation">Certificado de Participação</option>
+                            <option value="honorific">Certificado Honorífico</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipientName">Nome do Recipiente:</label>
+                        <input type="text" id="recipientName" placeholder="Nome completo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipientDegree">Grau Maçônico:</label>
+                        <select id="recipientDegree" required>
+                            <option value="">Selecione o grau</option>
+                            <option value="apprentice">Aprendiz</option>
+                            <option value="journeyman">Companheiro</option>
+                            <option value="master">Mestre</option>
+                            <option value="visitor">Visitante</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Descrição/Atividade:</label>
+                        <textarea id="description" placeholder="Descreva a atividade ou reconhecimento" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex-row">
+                    <button onclick="generateCertificatePreview()">Visualizar Certificado</button>
+                    <button class="secondary" onclick="resetCertificateForm()">Limpar</button>
+                </div>
+            </div>
+
+            <!-- CERTIFICATE PREVIEW -->
+            <div id="certPreviewContainer" style="display:none;">
+                <div class="card">
+                    <div class="card-title">Visualização do Certificado</div>
+
+                    <div class="cert-preview" id="certPreview">
+                        <div class="cert-logo">🏛️ LOJA MAÇÔNICA MONTE SINAI</div>
+                        <div class="cert-title">Certificado</div>
+
+                        <div class="cert-content">
+                            <div class="cert-field">
+                                <span class="cert-field-label">A presente, certificamos que</span>
+                            </div>
+                            <div class="cert-field" id="previewName"></div>
+
+                            <div class="cert-field">
+                                <span class="cert-field-label">Grau:</span>
+                                <span id="previewDegree"></span>
+                            </div>
+
+                            <div class="cert-field">
+                                <span class="cert-field-label">Participou da seguinte atividade:</span>
+                            </div>
+                            <div id="previewDescription"></div>
+
+                            <div class="cert-field">
+                                <span class="cert-field-label">Realizado em:</span>
+                                <span id="previewDate"></span>
+                            </div>
+                        </div>
+
+                        <div class="cert-footer">
+                            Documento digital gerado pelo Sistema de Certificados Monte Sinai
+                        </div>
+                    </div>
+
+                    <div class="flex-row">
+                        <button onclick="saveCertificate()">💾 Guardar Certificado</button>
+                        <button onclick="printCertificate()">🖨️ Imprimir</button>
+                        <button class="secondary" onclick="closeCertificatePreview()">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: GERENCIAR DADOS -->
+        <div id="sectionManage" class="section">
+            <h2 class="section-title">⚙️ Gerenciar Dados</h2>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="card-title">Importar Dados</div>
+                    <p style="margin-bottom: 15px;">Importe certificados de arquivo JSON ou CSV:</p>
+                    <input type="file" id="importFile" accept=".json,.csv" style="margin-bottom: 10px;">
+                    <button onclick="importData()">📥 Importar</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Exportar Dados</div>
+                    <p style="margin-bottom: 15px;">Exporte todos os certificados gerados:</p>
+                    <div class="flex-row">
+                        <button onclick="exportData('json')">📤 JSON</button>
+                        <button onclick="exportData('csv')">📤 CSV</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Limpar Banco de Dados</div>
+                    <p style="margin-bottom: 15px;">Remove todos os dados armazenados (irreversível):</p>
+                    <button class="danger" onclick="clearDatabase()">🗑️ Limpar</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Configurações do Sistema</div>
+                    <p style="margin-bottom: 15px;">Ajuste configurações gerais:</p>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label for="sysLodgeName">Nome da Loja:</label>
+                        <input type="text" id="sysLodgeName" placeholder="Loja Maçônica Monte Sinai">
+                    </div>
+                    <button onclick="updateSystemSettings()">💾 Salvar Configurações</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: USUÁRIOS -->
+        <div id="sectionUsers" class="section">
+            <h2 class="section-title">👥 Gerenciamento de Usuários</h2>
+
+            <div class="card mb">
+                <div class="card-title">Adicionar Novo Usuário</div>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label for="newUsername">Usuário:</label>
+                        <input type="text" id="newUsername" placeholder="Nome de usuário">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Senha:</label>
+                        <input type="password" id="newPassword" placeholder="Senha">
+                    </div>
+                    <div class="form-group">
+                        <label for="newRole">Função:</label>
+                        <select id="newRole">
+                            <option value="user">Usuário</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="addUser()">➕ Adicionar Usuário</button>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Lista de Usuários</div>
+
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Função</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION: RELATÓRIOS -->
+        <div id="sectionReports" class="section">
+            <h2 class="section-title">📊 Relatórios e Estatísticas</h2>
+
+            <div class="grid">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalCerts">0</div>
+                    <div class="stat-label">Certificados Emitidos</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Usuários Cadastrados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="lastMonth">0</div>
+                    <div class="stat-label">Emitidos Este Mês</div>
+                </div>
+            </div>
+
+            <div class="card mt">
+                <div class="card-title">Certificados Recentes</div>
+
+                <div class="search-bar">
+                    <input type="text" id="reportSearch" placeholder="Buscar por nome, tipo ou data...">
+                    <button onclick="filterReports()">🔍 Buscar</button>
+                </div>
+
+                <table id="reportsTable">
+                    <thead>
+                        <tr>
+                            <th>Recipiente</th>
+                            <th>Tipo</th>
+                            <th>Grau</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // DATA MANAGEMENT
+    const DB_KEY = 'monteSinaiCerts';
+    const USERS_KEY = 'monteSinaiUsers';
+    const SETTINGS_KEY = 'monteSinaiSettings';
+
+    let currentUser = null;
+    let certificates = [];
+    let users = JSON.parse(localStorage.getItem(USERS_KEY)) || [
+        { username: 'admin', password: 'admin', role: 'admin' },
+        { username: 'user', password: 'user', role: 'user' }
+    ];
+
+    // INITIALIZATION
+    function init() {
+        loadCertificates();
+        saveUsers();
+    }
+
+    // AUTHENTICATION
+    function handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+
+        const user = users.find(u => u.username === username && u.password === password);
+
+        if (user) {
+            currentUser = user;
+            showApp();
+            showAlert('globalAlert', `Bem-vindo, ${username}!`, 'success');
+        } else {
+            showAlert('alertLogin', 'Usuário ou senha inválidos', 'error');
+        }
+    }
+
+    function handleLogout() {
+        currentUser = null;
+        document.getElementById('loginUsername').value = '';
+        document.getElementById('loginPassword').value = '';
+        hideApp();
+        showAlert('alertLogin', 'Desconectado com sucesso', 'info');
+    }
+
+    // UI MANAGEMENT
+    function showApp() {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appContainer').classList.add('active');
+        updateUserDisplay();
+        updatePermissions();
+    }
+
+    function hideApp() {
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('appContainer').classList.remove('active');
+    }
+
+    function updateUserDisplay() {
+        document.getElementById('userDisplay').textContent = currentUser.username;
+        const badge = document.getElementById('userBadge');
+        badge.textContent = currentUser.role === 'admin' ? 'Administrador' : 'Usuário';
+        badge.className = `badge ${currentUser.role === 'admin' ? 'badge-admin' : 'badge-user-type'}`;
+    }
+
+    function updatePermissions() {
+        const isAdmin = currentUser.role === 'admin';
+        document.getElementById('navManage').style.display = isAdmin ? 'block' : 'none';
+        document.getElementById('navUsers').style.display = isAdmin ? 'block' : 'none';
+        document.getElementById('navReports').style.display = isAdmin ? 'block' : 'none';
+    }
+
+    function switchSection(sectionName) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('section' + sectionName.charAt(0).toUpperCase() + sectionName.slice(1)).classList.add('active');
+        document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+
+        if (sectionName === 'reports') {
+            updateReports();
+        }
+    }
+
+    function showAlert(elementId, message, type) {
+        const alert = document.getElementById(elementId);
+        alert.textContent = message;
+        alert.className = `alert ${type} show`;
+        setTimeout(() => alert.classList.remove('show'), 4000);
+    }
+
+    // CERTIFICATE FUNCTIONS
+    function generateCertificatePreview() {
+        const name = document.getElementById('recipientName').value;
+        const degree = document.getElementById('recipientDegree').value;
+        const description = document.getElementById('description').value;
+        const date = document.getElementById('certDate').value;
+
+        if (!name || !degree || !date) {
+            showAlert('globalAlert', 'Por favor, preencha todos os campos obrigatórios', 'error');
+            return;
+        }
+
+        const degreeText = { apprentice: 'Aprendiz', journeyman: 'Companheiro', master: 'Mestre', visitor: 'Visitante' }[degree];
+
+        document.getElementById('previewName').textContent = name;
+        document.getElementById('previewDegree').textContent = degreeText;
+        document.getElementById('previewDescription').textContent = description || 'Participação em atividade maçônica';
+        document.getElementById('previewDate').textContent = new Date(date).toLocaleDateString('pt-BR');
+
+        document.getElementById('certPreviewContainer').style.display = 'block';
+        document.getElementById('certPreviewContainer').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function saveCertificate() {
+        const name = document.getElementById('recipientName').value;
+        const type = document.getElementById('certType').value;
+        const degree = document.getElementById('recipientDegree').value;
+        const date = document.getElementById('certDate').value;
+        const description = document.getElementById('description').value;
+        const session = document.getElementById('certSession').value;
+
+        const cert = {
+            id: Date.now(),
+            name,
+            type,
+            degree,
+            date,
+            description,
+            session,
+            createdBy: currentUser.username,
+            createdAt: new Date().toISOString()
+        };
+
+        certificates.push(cert);
+        saveCertificates();
+        showAlert('globalAlert', 'Certificado salvo com sucesso!', 'success');
+        resetCertificateForm();
+        closeCertificatePreview();
+    }
+
+    function printCertificate() {
+        window.print();
+    }
+
+    function resetCertificateForm() {
+        document.getElementById('certSession').value = '';
+        document.getElementById('certDate').value = '';
+        document.getElementById('certType').value = '';
+        document.getElementById('recipientName').value = '';
+        document.getElementById('recipientDegree').value = '';
+        document.getElementById('description').value = '';
+    }
+
+    function closeCertificatePreview() {
+        document.getElementById('certPreviewContainer').style.display = 'none';
+    }
+
+    // DATA STORAGE
+    function saveCertificates() {
+        localStorage.setItem(DB_KEY, JSON.stringify(certificates));
+    }
+
+    function loadCertificates() {
+        const data = localStorage.getItem(DB_KEY);
+        certificates = data ? JSON.parse(data) : [];
+    }
+
+    function saveUsers() {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    // ADMIN FUNCTIONS
+    function addUser() {
+        const username = document.getElementById('newUsername').value;
+        const password = document.getElementById('newPassword').value;
+        const role = document.getElementById('newRole').value;
+
+        if (!username || !password) {
+            showAlert('globalAlert', 'Usuário e senha são obrigatórios', 'error');
+            return;
+        }
+
+        if (users.find(u => u.username === username)) {
+            showAlert('globalAlert', 'Usuário já existe', 'error');
+            return;
+        }
+
+        users.push({ username, password, role });
+        saveUsers();
+        showAlert('globalAlert', 'Usuário adicionado com sucesso', 'success');
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
+        updateUsersList();
+    }
+
+    function deleteUser(username) {
+        if (confirm('Tem certeza que deseja deletar este usuário?')) {
+            users = users.filter(u => u.username !== username);
+            saveUsers();
+            showAlert('globalAlert', 'Usuário deletado', 'success');
+            updateUsersList();
+        }
+    }
+
+    function updateUsersList() {
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = users.map(u => `
+            <tr>
+                <td>${u.username}</td>
+                <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-user-type'}">${u.role === 'admin' ? 'Administrador' : 'Usuário'}</span></td>
+                <td><button class="danger" onclick="deleteUser('${u.username}')" style="padding: 6px 12px; font-size: 0.85em;">Deletar</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function importData() {
+        const file = document.getElementById('importFile').files[0];
+        if (!file) {
+            showAlert('globalAlert', 'Selecione um arquivo', 'error');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                certificates = [...certificates, ...data];
+                saveCertificates();
+                showAlert('globalAlert', `${data.length} certificados importados`, 'success');
+                document.getElementById('importFile').value = '';
+            } catch {
+                showAlert('globalAlert', 'Erro ao importar arquivo', 'error');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function exportData(format) {
+        if (format === 'json') {
+            const dataStr = JSON.stringify(certificates, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            downloadFile(dataBlob, 'certificados.json');
+        } else if (format === 'csv') {
+            let csv = 'Nome,Tipo,Grau,Data,Descrição,Sessão\n';
+            certificates.forEach(c => {
+                csv += `"${c.name}","${c.type}","${c.degree}","${c.date}","${c.description}","${c.session}"\n`;
+            });
+            const dataBlob = new Blob([csv], { type: 'text/csv' });
+            downloadFile(dataBlob, 'certificados.csv');
+        }
+    }
+
+    function downloadFile(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function clearDatabase() {
+        if (confirm('ATENÇÃO: Isto vai deletar TODOS os dados. Tem certeza?')) {
+            certificates = [];
+            saveCertificates();
+            showAlert('globalAlert', 'Banco de dados limpo', 'info');
+            updateReports();
+        }
+    }
+
+    function updateSystemSettings() {
+        const lodgeName = document.getElementById('sysLodgeName').value;
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify({ lodgeName }));
+        showAlert('globalAlert', 'Configurações salvas', 'success');
+    }
+
+    // REPORTS
+    function updateReports() {
+        updateStats();
+        loadReportsTable();
+    }
+
+    function updateStats() {
+        const now = new Date();
+        const thisMonth = certificates.filter(c => {
+            const certDate = new Date(c.date);
+            return certDate.getMonth() === now.getMonth() && certDate.getFullYear() === now.getFullYear();
+        });
+
+        document.getElementById('totalCerts').textContent = certificates.length;
+        document.getElementById('totalUsers').textContent = users.length;
+        document.getElementById('lastMonth').textContent = thisMonth.length;
+    }
+
+    function loadReportsTable() {
+        const tbody = document.getElementById('reportsTableBody');
+        const degreeMap = { apprentice: 'Aprendiz', journeyman: 'Companheiro', master: 'Mestre', visitor: 'Visitante' };
+        const typeMap = { attendance: 'Presença', completion: 'Conclusão', participation: 'Participação', honorific: 'Honorífico' };
+
+        tbody.innerHTML = certificates.map(c => `
+            <tr>
+                <td>${c.name}</td>
+                <td>${typeMap[c.type] || c.type}</td>
+                <td>${degreeMap[c.degree] || c.degree}</td>
+                <td>${new Date(c.date).toLocaleDateString('pt-BR')}</td>
+                <td><button class="secondary" onclick="viewCertificate(${c.id})">Ver</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function filterReports() {
+        const search = document.getElementById('reportSearch').value.toLowerCase();
+        const tbody = document.getElementById('reportsTableBody');
+        const degreeMap = { apprentice: 'Aprendiz', journeyman: 'Companheiro', master: 'Mestre', visitor: 'Visitante' };
+        const typeMap = { attendance: 'Presença', completion: 'Conclusão', participation: 'Participação', honorific: 'Honorífico' };
+
+        const filtered = certificates.filter(c =>
+            c.name.toLowerCase().includes(search) ||
+            c.type.toLowerCase().includes(search) ||
+            c.date.includes(search)
+        );
+
+        tbody.innerHTML = filtered.map(c => `
+            <tr>
+                <td>${c.name}</td>
+                <td>${typeMap[c.type] || c.type}</td>
+                <td>${degreeMap[c.degree] || c.degree}</td>
+                <td>${new Date(c.date).toLocaleDateString('pt-BR')}</td>
+                <td><button class="secondary" onclick="viewCertificate(${c.id})">Ver</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function viewCertificate(id) {
+        const cert = certificates.find(c => c.id === id);
+        if (cert) {
+            document.getElementById('recipientName').value = cert.name;
+            document.getElementById('recipientDegree').value = cert.degree;
+            document.getElementById('certDate').value = cert.date;
+            document.getElementById('description').value = cert.description;
+            document.getElementById('certSession').value = cert.session;
+            generateCertificatePreview();
+            switchSection('certificates');
+        }
+    }
+
+    // STARTUP
+    window.addEventListener('load', init);
+    init();
+</script>
+
+</body>
+</html>select id="certSession" onchange="updateCertPreview()" required>
                             <option value="">Selecione...</option>
                         </select>
                     </div>
@@ -886,6 +1482,84 @@
                     </thead>
                     <tbody id="tableUsers"></tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- SECTION: RELATÓRIOS -->
+        <div id="sectionReports" class="section" style="display:none;">
+            <h2 class="section-title">📊 Relatórios de Certificados</h2>
+
+            <div class="card mb">
+                <div class="card-title">Filtros de Relatório</div>
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label for="reportSession">Sessão:</label>
+                        <select id="reportSession" onchange="updateReportPreview()">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reportDegree">Grau:</label>
+                        <select id="reportDegree" onchange="updateReportPreview()">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reportDateFrom">Data Inicial:</label>
+                        <input type="date" id="reportDateFrom" onchange="updateReportPreview()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reportDateTo">Data Final:</label>
+                        <input type="date" id="reportDateTo" onchange="updateReportPreview()">
+                    </div>
+                </div>
+
+                <div class="flex-row">
+                    <button onclick="exportReportCSV()">📥 Exportar CSV</button>
+                    <button onclick="exportReportPDF()" class="secondary">📥 Exportar PDF</button>
+                    <button onclick="printReport()" class="secondary">🖨️ Imprimir</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Certificados Emitidos</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Irmão</th>
+                            <th>Grau</th>
+                            <th>Sessão</th>
+                            <th>Data</th>
+                            <th>Obreiro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableReports"></tbody>
+                </table>
+            </div>
+
+            <div class="card mt">
+                <div class="card-title">Estatísticas</div>
+                <div class="grid">
+                    <div class="stat-box">
+                        <div class="stat-number" id="statTotal">0</div>
+                        <div class="stat-label">Total de Certificados</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="statByDegree">0</div>
+                        <div class="stat-label">Por Grau</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="statBySession">0</div>
+                        <div class="stat-label">Por Sessão</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="statThisMonth">0</div>
+                        <div class="stat-label">Este Mês</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1523,6 +2197,396 @@
             tbody.appendChild(tr);
         });
     }
+
+    // ========================================
+    // REPORTS & HISTORY
+    // ========================================
+
+    const HISTORY_KEY = 'montesinai_certificados_history';
+
+    function getHistory() {
+        const data = localStorage.getItem(HISTORY_KEY);
+        return data ? JSON.parse(data) : [];
+    }
+
+    function saveHistory(certificate) {
+        const history = getHistory();
+        history.push({
+            ...certificate,
+            id: Date.now(),
+            savedAt: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR')
+        });
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+
+    function updateReportPreview() {
+        const session = document.getElementById('reportSession').value;
+        const degree = document.getElementById('reportDegree').value;
+        const dateFrom = document.getElementById('reportDateFrom').value;
+        const dateTo = document.getElementById('reportDateTo').value;
+
+        let history = getHistory();
+
+        if (session) history = history.filter(h => h.certSession === session);
+        if (degree) history = history.filter(h => h.certDegree === degree);
+        if (dateFrom) history = history.filter(h => new Date(h.certDate) >= new Date(dateFrom));
+        if (dateTo) history = history.filter(h => new Date(h.certDate) <= new Date(dateTo));
+
+        renderReportTable(history);
+        updateStatistics(history);
+    }
+
+    function renderReportTable(data) {
+        const tbody = document.getElementById('tableReports');
+        tbody.innerHTML = '';
+
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Nenhum certificado encontrado</td></tr>';
+            return;
+        }
+
+        data.forEach(cert => {
+            const tr = document.createElement('tr');
+            const dateObj = new Date(cert.certDate + 'T00:00:00');
+            const formattedDate = dateObj.toLocaleDateString('pt-BR');
+            tr.innerHTML = `
+                <td>${cert.certName}</td>
+                <td>${cert.certDegree}</td>
+                <td>${cert.certSession}</td>
+                <td>${formattedDate}</td>
+                <td>${cert.certObreiro}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updateStatistics(data) {
+        document.getElementById('statTotal').textContent = data.length;
+
+        const uniqueDegrees = new Set(data.map(d => d.certDegree)).size;
+        document.getElementById('statByDegree').textContent = uniqueDegrees;
+
+        const uniqueSessions = new Set(data.map(d => d.certSession)).size;
+        document.getElementById('statBySession').textContent = uniqueSessions;
+
+        const today = new Date();
+        const thisMonth = data.filter(d => {
+            const certDate = new Date(d.certDate + 'T00:00:00');
+            return certDate.getMonth() === today.getMonth() && certDate.getFullYear() === today.getFullYear();
+        });
+        document.getElementById('statThisMonth').textContent = thisMonth.length;
+    }
+
+    function exportReportCSV() {
+        const history = getHistory();
+        if (history.length === 0) {
+            showAlert('Nenhum certificado para exportar!', 'error');
+            return;
+        }
+
+        let csv = 'Nome,Grau,Sessão,Data,Obreiro,Potência\n';
+        history.forEach(cert => {
+            const dateObj = new Date(cert.certDate + 'T00:00:00');
+            const formattedDate = dateObj.toLocaleDateString('pt-BR');
+            csv += `"${cert.certName}","${cert.certDegree}","${cert.certSession}","${formattedDate}","${cert.certObreiro}","${cert.certPotencia}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `relatorio_certificados_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showAlert('Relatório exportado em CSV!', 'success');
+    }
+
+    function exportReportPDF() {
+        const history = getHistory();
+        if (history.length === 0) {
+            showAlert('Nenhum certificado para exportar!', 'error');
+            return;
+        }
+
+        let html = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <title>Relatório de Certificados</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    h1 { color: #1a472a; text-align: center; border-bottom: 3px solid #d4a574; padding-bottom: 15px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th { background: #1a472a; color: white; padding: 12px; text-align: left; }
+                    td { padding: 10px; border-bottom: 1px solid #ddd; }
+                    tr:hover { background: #f9f9f9; }
+                    .footer { margin-top: 20px; text-align: center; font-size: 0.9em; color: #666; }
+                </style>
+            </head>
+            <body>
+                <h1>🏛️ Relatório de Certificados - Loja Maçônica Monte Sinai</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Grau</th>
+                            <th>Sessão</th>
+                            <th>Data</th>
+                            <th>Obreiro</th>
+                            <th>Potência</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        history.forEach(cert => {
+            const dateObj = new Date(cert.certDate + 'T00:00:00');
+            const formattedDate = dateObj.toLocaleDateString('pt-BR');
+            html += `
+                        <tr>
+                            <td>${cert.certName}</td>
+                            <td>${cert.certDegree}</td>
+                            <td>${cert.certSession}</td>
+                            <td>${formattedDate}</td>
+                            <td>${cert.certObreiro}</td>
+                            <td>${cert.certPotencia}</td>
+                        </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+                <div class="footer">
+                    <p>Relatório gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
+                    <p>Total de certificados: ${history.length}</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        const printWindow = window.open('', '_blank', 'width=1000,height=800');
+        printWindow.document.write(html);
+        printWindow.document.close();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 250);
+
+        showAlert('Relatório exportado em PDF!', 'success');
+    }
+
+    function printReport() {
+        const history = getHistory();
+        if (history.length === 0) {
+            showAlert('Nenhum certificado para imprimir!', 'error');
+            return;
+        }
+
+        let html = `
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <title>Relatório de Certificados</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    h1 { color: #1a472a; text-align: center; border-bottom: 3px solid #d4a574; padding-bottom: 15px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th { background: #1a472a; color: white; padding: 12px; text-align: left; }
+                    td { padding: 10px; border-bottom: 1px solid #ddd; }
+                    tr:hover { background: #f9f9f9; }
+                    .footer { margin-top: 20px; text-align: center; font-size: 0.9em; color: #666; }
+                </style>
+            </head>
+            <body>
+                <h1>🏛️ Relatório de Certificados - Loja Maçônica Monte Sinai</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Grau</th>
+                            <th>Sessão</th>
+                            <th>Data</th>
+                            <th>Obreiro</th>
+                            <th>Potência</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        history.forEach(cert => {
+            const dateObj = new Date(cert.certDate + 'T00:00:00');
+            const formattedDate = dateObj.toLocaleDateString('pt-BR');
+            html += `
+                        <tr>
+                            <td>${cert.certName}</td>
+                            <td>${cert.certDegree}</td>
+                            <td>${cert.certSession}</td>
+                            <td>${formattedDate}</td>
+                            <td>${cert.certObreiro}</td>
+                            <td>${cert.certPotencia}</td>
+                        </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+                <div class="footer">
+                    <p>Relatório gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
+                    <p>Total de certificados: ${history.length}</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        const printWindow = window.open('', '_blank', 'width=1000,height=800');
+        printWindow.document.write(html);
+        printWindow.document.close();
+        setTimeout(() => {
+            printWindow.print();
+        }, 250);
+    }
+
+    // Update initializeApp to show reports tab for admins
+    function initializeAppOriginal() {
+        const db = getDatabase();
+        const isAdmin = db.currentUser?.type === 'admin';
+
+        document.getElementById('userDisplay').textContent = `Olá, ${db.currentUser.username}`;
+        document.getElementById('userBadge').textContent = isAdmin ? 'ADMINISTRADOR' : 'USUÁRIO';
+        document.getElementById('userBadge').className = isAdmin ? 'badge badge-admin' : 'badge badge-user-type';
+
+        document.getElementById('navManage').style.display = isAdmin ? 'block' : 'none';
+        document.getElementById('navUsers').style.display = isAdmin ? 'block' : 'none';
+        document.getElementById('navReports').style.display = isAdmin ? 'block' : 'none';
+
+        loadAllData();
+        switchSection('certificates');
+    }
+
+    // Override initializeApp
+    const originalInitializeApp = initializeApp;
+    initializeApp = initializeAppOriginal;
+
+    // Save certificate to history when downloading PDF
+    function downloadCertificatePDFOriginal() {
+        const session = document.getElementById('certSession').value;
+        const degree = document.getElementById('certDegree').value;
+        const name = document.getElementById('certName').value;
+        const obreiro = document.getElementById('certObreiro').value;
+        const potencia = document.getElementById('certPotencia').value;
+        const date = document.getElementById('certDate').value;
+
+        if (!session || !degree || !name) {
+            showAlert('Preencha os campos obrigatórios!', 'error');
+            return;
+        }
+
+        // Save to history
+        saveHistory({
+            certSession: session,
+            certDegree: degree,
+            certName: name,
+            certObreiro: obreiro,
+            certPotencia: potencia,
+            certDate: date
+        });
+
+        const cert = document.querySelector('.cert-preview');
+        const html = cert.innerHTML;
+
+        const printWindow = window.open('', '_blank', 'width=1000,height=800');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <title>Certificado</title>
+                <style>
+                    body { margin: 0; padding: 20px; font-family: 'Georgia', serif; }
+                    .cert-preview {
+                        border: 3px solid #d4a574;
+                        padding: 50px 40px;
+                        text-align: center;
+                        min-height: 600px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                    }
+                    .cert-logo { font-size: 1.5em; font-weight: bold; margin-bottom: 15px; }
+                    .cert-title { font-size: 3em; font-weight: bold; margin-bottom: 30px; color: #d4a574; }
+                    .cert-content { font-size: 1.2em; line-height: 2; margin: 20px 0; }
+                    .cert-field { margin: 12px 0; font-weight: bold; }
+                    .cert-footer { margin-top: 40px; font-size: 0.9em; color: #666; }
+                </style>
+            </head>
+            <body>
+                <div class="cert-preview">${html}</div>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 250);
+
+        showAlert('Certificado baixado e registrado no histórico!', 'success');
+    }
+
+    // Override downloadCertificatePDF
+    downloadCertificatePDF = downloadCertificatePDFOriginal;
+
+    // Load reports data on init
+    function loadAllDataOriginal() {
+        loadCertSelects();
+        loadSessions();
+        loadDegrees();
+        loadNames();
+        loadObreiros();
+        loadPotencias();
+        loadUsers();
+        createFilterButtons();
+        
+        // Load reports if admin
+        const db = getDatabase();
+        if (db.currentUser?.type === 'admin') {
+            loadReportSelects();
+            updateReportPreview();
+        }
+    }
+
+    function loadReportSelects() {
+        const db = getDatabase();
+
+        const selSession = document.getElementById('reportSession');
+        selSession.innerHTML = '<option value="">Todas</option>';
+        db.sessions.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s;
+            selSession.appendChild(opt);
+        });
+
+        const selDegree = document.getElementById('reportDegree');
+        selDegree.innerHTML = '<option value="">Todos</option>';
+        db.degrees.forEach(d => {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            selDegree.appendChild(opt);
+        });
+    }
+
+    // Override loadAllData
+    const originalLoadAllData = loadAllData;
+    loadAllData = loadAllDataOriginal;
 
     // INIT
     window.addEventListener('load', () => {
