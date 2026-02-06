@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
+        /* ================= ESTILOS GERAIS ================= */
         :root {
             --primary: #0a1f44; /* Azul Marinho Profundo */
             --gold: #c5a059;    /* Dourado Maçônico */
@@ -27,7 +28,7 @@
             min-height: 100vh;
         }
 
-        /* --- LOGIN --- */
+        /* ================= TELA DE LOGIN ================= */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, var(--primary) 0%, #000 100%);
@@ -37,21 +38,22 @@
         
         .login-box {
             background: var(--white); padding: 40px; border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 350px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 350px; text-align: center;
             border-top: 5px solid var(--gold);
         }
 
         .login-box h2 { color: var(--primary); margin-bottom: 20px; font-family: 'Cinzel', serif; }
-        .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        
         .btn-gold { 
             background: var(--gold); color: var(--primary); font-weight: bold; border: none; 
-            padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px;
-            transition: 0.3s;
+            padding: 12px 20px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px;
+            transition: 0.3s; font-family: 'Cinzel', serif; letter-spacing: 1px;
         }
         .btn-gold:hover { background: var(--gold-light); }
 
-        /* --- LAYOUT PRINCIPAL --- */
-        #app { display: none; }
+        /* ================= LAYOUT PRINCIPAL ================= */
+        #app { display: none; } /* Escondido até o login */
         
         nav {
             background: var(--primary); color: var(--gold); padding: 15px 40px;
@@ -59,105 +61,155 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         
-        nav h1 { font-family: 'Cinzel', serif; font-size: 1.5rem; }
+        nav h1 { font-family: 'Cinzel', serif; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
         
         .nav-links button {
             background: transparent; border: 1px solid var(--gold); color: var(--gold);
             padding: 8px 15px; margin-left: 10px; cursor: pointer; border-radius: 4px;
+            font-size: 0.9rem; transition: 0.3s;
         }
         .nav-links button:hover { background: var(--gold); color: var(--primary); }
         .nav-links button.logout { border-color: var(--danger); color: #ff6b6b; }
         .nav-links button.logout:hover { background: var(--danger); color: white; }
 
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 350px 1fr; gap: 30px; }
+        .container { 
+            max-width: 1300px; margin: 30px auto; padding: 0 20px; 
+            display: grid; grid-template-columns: 350px 1fr; gap: 30px; 
+        }
 
-        /* --- CONTROLES ESQUERDA --- */
-        .controls { background: var(--white); padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        /* ================= CONTROLES (Lateral Esquerda) ================= */
+        .controls { background: var(--white); padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; }
         .controls h3 { color: var(--primary); border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; font-family: 'Cinzel', serif; }
         
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.9rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
-        .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; }
+        .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Lato', sans-serif; }
+        .form-group select:focus, .form-group input:focus { border-color: var(--gold); outline: none; }
         
-        .add-btn { font-size: 0.8rem; color: var(--primary); text-decoration: underline; cursor: pointer; display: block; margin-top: 2px; text-align: right;}
+        .add-btn { font-size: 0.8rem; color: var(--primary); text-decoration: underline; cursor: pointer; display: block; margin-top: 4px; text-align: right; transition: 0.2s; }
+        .add-btn:hover { color: var(--gold); }
 
-        .letter-filter { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; }
+        .letter-filter { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 15px; }
         .letter-filter button { 
-            font-size: 0.7rem; padding: 2px 5px; background: #eee; border: none; cursor: pointer; 
+            font-size: 0.7rem; padding: 4px 6px; background: #eee; border: none; cursor: pointer; border-radius: 2px;
         }
-        .letter-filter button:hover { background: var(--gold); }
+        .letter-filter button:hover, .letter-filter button.active { background: var(--gold); color: var(--primary); font-weight: bold; }
 
-        /* --- CERTIFICADO (Visualização) --- */
+        /* ================= VISUALIZAÇÃO DO CERTIFICADO ================= */
         .certificate-wrapper { 
-            background: #555; padding: 40px; border-radius: 8px; 
-            display: flex; justify-content: center; align-items: center; 
+            background: #2c2c2c; padding: 40px; border-radius: 8px; 
+            display: flex; justify-content: center; align-items: flex-start; 
+            overflow: auto; min-height: 600px;
         }
 
         #certificate {
-            width: 1123px; height: 794px; /* Tamanho A4 Paisagem (aprox em pixels para tela) */
+            width: 1123px; height: 794px; /* Tamanho A4 Paisagem (Pixel Perfect) */
             background: var(--white);
             position: relative;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            transform: scale(0.65); /* Escala para caber na tela */
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            transform: scale(0.75); /* Zoom visual para caber na tela */
             transform-origin: top center;
             color: #000;
-            border: 20px solid var(--primary);
+            border: 15px solid var(--primary);
+            flex-shrink: 0;
         }
 
-        /* DESIGN DO CERTIFICADO */
         .cert-inner-border {
-            border: 5px solid var(--gold);
+            border: 4px solid var(--gold);
             height: 100%;
             padding: 40px;
             position: relative;
             display: flex; flex-direction: column; align-items: center; text-align: center;
         }
 
+        /* LOGO ESTILIZADO */
+        .cert-logo-container {
+            margin-bottom: 20px;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cert-logo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border: 3px solid var(--gold);
+            padding: 2px;
+            border-radius: 8px; 
+        }
+
+        /* Cantoneiras Douradas */
         .cert-corner {
             position: absolute; width: 60px; height: 60px;
-            border-top: 5px solid var(--gold); border-left: 5px solid var(--gold);
+            border-top: 6px solid var(--gold); border-left: 6px solid var(--gold);
         }
         .tr { top: 10px; right: 10px; transform: rotate(90deg); }
         .br { bottom: 10px; right: 10px; transform: rotate(180deg); }
         .bl { bottom: 10px; left: 10px; transform: rotate(270deg); }
         .tl { top: 10px; left: 10px; }
 
+        .cert-header { margin-bottom: 30px; margin-top: 0; }
         .cert-header h1 {
-            font-family: 'Cinzel', serif; font-size: 3rem; color: var(--primary);
-            margin-bottom: 10px; letter-spacing: 2px;
+            font-family: 'Cinzel', serif; font-size: 3.5rem; color: var(--primary);
+            margin-bottom: 5px; letter-spacing: 2px; line-height: 1.1;
         }
         .cert-header h2 {
-            font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--gold);
-            text-transform: uppercase; margin-bottom: 40px;
+            font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--gold);
+            text-transform: uppercase; letter-spacing: 5px; margin-top: 5px;
         }
 
-        .cert-body { font-size: 1.4rem; line-height: 2; width: 90%; margin: 0 auto; font-family: 'Playfair Display', serif; }
+        .cert-body { 
+            font-size: 1.5rem; line-height: 2.2; width: 90%; margin: 10px auto; 
+            font-family: 'Lato', sans-serif; font-weight: 300;
+        }
         .cert-body span { 
-            font-weight: bold; color: var(--primary); border-bottom: 1px solid #999; padding: 0 10px; display: inline-block; min-width: 100px;
+            font-family: 'Cinzel', serif; font-weight: 700; color: var(--primary); 
+            border-bottom: 1px solid #999; padding: 0 15px; display: inline-block; 
+            min-width: 100px;
         }
 
         .cert-signatures {
-            margin-top: auto; width: 100%; display: flex; justify-content: space-around; padding-bottom: 20px;
+            margin-top: auto; width: 100%; display: flex; justify-content: space-around; padding-bottom: 40px;
         }
-        .signature-line { width: 300px; border-top: 1px solid #000; text-align: center; padding-top: 10px; }
-        .signature-line p { font-size: 0.9rem; text-transform: uppercase; color: var(--primary); font-weight: bold; }
-        .signature-font { font-family: 'Great Vibes', cursive; font-size: 2.5rem; color: #000; margin-bottom: -10px; display: block; height: 50px;}
-
-        /* --- MODAL --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 400px; }
+        .signature-line { width: 350px; border-top: 1px solid #333; text-align: center; padding-top: 10px; position: relative; }
+        .signature-line p { font-size: 0.9rem; text-transform: uppercase; color: var(--primary); font-weight: bold; font-family: 'Cinzel', serif; }
         
-        /* --- PRINT --- */
+        .signature-font { 
+            font-family: 'Great Vibes', cursive; font-size: 3rem; color: #000; 
+            position: absolute; bottom: 35px; left: 0; right: 0; margin: auto;
+            transform: rotate(-5deg);
+        }
+
+        /* ================= MODAL ================= */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .modal-content h3 { color: var(--primary); font-family: 'Cinzel', serif; margin-bottom: 15px; }
+        
+        /* ================= ESTILOS DE IMPRESSÃO (PDF) ================= */
         @media print {
+            @page { size: landscape; margin: 0; }
             body * { visibility: hidden; }
             #certificate, #certificate * { visibility: visible; }
             #certificate {
                 position: fixed; left: 0; top: 0; width: 100%; height: 100%;
                 margin: 0; padding: 0; transform: none; box-shadow: none; border: 20px solid var(--primary);
+                z-index: 9999;
             }
-            .certificate-wrapper { padding: 0; background: none; }
-            @page { size: landscape; margin: 0; }
+            .certificate-wrapper { padding: 0; background: none; display: block; }
+        }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .certificate-wrapper { display: none; }
+            nav { padding: 15px 20px; flex-direction: column; gap: 15px; }
+            .controls::after {
+                content: "Nota: Para visualizar o certificado e imprimir, utilize um computador.";
+                display: block; margin-top: 20px; color: #777; font-size: 0.8rem; font-style: italic;
+            }
         }
     </style>
 </head>
@@ -165,23 +217,22 @@
 
     <div id="login-screen">
         <div class="login-box">
-            <div style="font-size: 3rem; color: var(--gold); margin-bottom: 10px;">G∴A∴D∴U∴</div>
+            <div style="font-size: 3rem; color: var(--gold); margin-bottom: 10px;">∴</div>
             <h2>Acesso Restrito</h2>
             <form onsubmit="app.login(event)">
-                <input type="text" id="user" placeholder="Usuário" required>
+                <input type="text" id="user" placeholder="Usuário" required autocomplete="off">
                 <input type="password" id="pass" placeholder="Senha" required>
                 <button type="submit" class="btn-gold">ENTRAR</button>
             </form>
-            <p style="margin-top:15px; font-size:0.8rem; color:#666;">Admin: admin/admin | User: user/user</p>
-        </div>
+            </div>
     </div>
 
     <div id="app">
         <nav>
-            <h1>🏛️ Monte Sinai</h1>
+            <h1>🏛️ Monte Sinai <span style="font-size: 0.8rem; opacity: 0.7; margin-left: 10px;">| Sistema de Certificados</span></h1>
             <div class="nav-links">
-                <button onclick="window.print()">🖨️ Imprimir / PDF</button>
-                <button onclick="app.resetForm()">🧹 Limpar</button>
+                <button onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+                <button onclick="app.resetForm()">🧹 Limpar Campos</button>
                 <button class="logout" onclick="app.logout()">Sair</button>
             </div>
         </nav>
@@ -192,32 +243,31 @@
 
                 <div class="form-group">
                     <label>Filtrar Irmão por Inicial:</label>
-                    <div class="letter-filter" id="letter-filters">
-                        </div>
+                    <div class="letter-filter" id="letter-filters"></div>
                 </div>
 
                 <div class="form-group">
                     <label>Nome do Irmão:</label>
                     <select id="inputIrmao" onchange="app.updateCert()"></select>
-                    <small class="add-btn" onclick="app.openModal('irmaos')">+ Adicionar Novo</small>
+                    <small class="add-btn" onclick="app.openModal('irmaos')">➕ Adicionar Novo Irmão</small>
                 </div>
 
                 <div class="form-group">
                     <label>Grau:</label>
                     <select id="inputGrau" onchange="app.updateCert()"></select>
-                    <small class="add-btn" onclick="app.openModal('graus')">+ Adicionar Novo</small>
+                    <small class="add-btn" onclick="app.openModal('graus')">➕ Adicionar Novo Grau</small>
                 </div>
 
                 <div class="form-group">
                     <label>Sessão:</label>
                     <select id="inputSessao" onchange="app.updateCert()"></select>
-                    <small class="add-btn" onclick="app.openModal('sessoes')">+ Adicionar Nova</small>
+                    <small class="add-btn" onclick="app.openModal('sessoes')">➕ Adicionar Nova Sessão</small>
                 </div>
 
                 <div class="form-group">
                     <label>Potência:</label>
                     <select id="inputPotencia" onchange="app.updateCert()"></select>
-                    <small class="add-btn" onclick="app.openModal('potencias')">+ Adicionar Nova</small>
+                    <small class="add-btn" onclick="app.openModal('potencias')">➕ Adicionar Nova Potência</small>
                 </div>
 
                 <div class="form-group">
@@ -228,7 +278,7 @@
                 <div class="form-group">
                     <label>Obreiro (Assina como Secretário):</label>
                     <select id="inputObreiro" onchange="app.updateCert()"></select>
-                    <small class="add-btn" onclick="app.openModal('obreiros')">+ Adicionar Novo</small>
+                    <small class="add-btn" onclick="app.openModal('obreiros')">➕ Adicionar Novo Obreiro</small>
                 </div>
             </div>
 
@@ -240,21 +290,25 @@
                         <div class="cert-corner bl"></div>
                         <div class="cert-corner br"></div>
 
+                        <div class="cert-logo-container">
+                            <img src="logo.jpg" alt="Logo Monte Sinai" class="cert-logo" onerror="this.style.display='none'">
+                        </div>
+
                         <div class="cert-header">
-                            <div style="font-size: 4rem; color: var(--gold); margin-bottom: 10px;">G∴</div>
                             <h1>Loja Maçônica Monte Sinai</h1>
                             <h2>Certificado de Presença</h2>
                         </div>
 
                         <div class="cert-body">
                             <p>
-                                Certificamos que o Irmão <span id="viewIrmao">Nome do Irmão</span>, 
-                                detentor do Grau <span id="viewGrau">Grau</span>, 
-                                esteve presente na <span id="viewSessao">Tipo da Sessão</span>, 
+                                Certificamos que o Irmão <br>
+                                <span id="viewIrmao">Nome do Irmão</span>, <br>
+                                detentor do Grau <span id="viewGrau">Grau</span>, <br>
+                                esteve presente na <span id="viewSessao">Tipo da Sessão</span>, <br>
                                 realizada sob os auspícios da Potência <span id="viewPotencia">Potência</span>.
                             </p>
-                            <p style="margin-top: 20px;">
-                                Porto Alegre, <span id="viewData">__/__/____</span>.
+                            <p style="margin-top: 30px;">
+                                Porto Alegre, <span id="viewData">__ de ________ de ____</span>.
                             </p>
                         </div>
 
@@ -277,10 +331,10 @@
     <div id="modal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle">Adicionar</h3>
-            <input type="text" id="modalInput" style="width: 100%; padding: 10px; margin: 15px 0;" placeholder="Digite o nome...">
-            <div style="text-align: right;">
-                <button onclick="document.getElementById('modal').style.display='none'" style="padding: 8px 15px;">Cancelar</button>
-                <button onclick="app.saveData()" class="btn-gold" style="width: auto;">Salvar</button>
+            <input type="text" id="modalInput" style="width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 4px;" placeholder="Digite o nome..." autocomplete="off">
+            <div style="text-align: right; margin-top: 15px;">
+                <button onclick="document.getElementById('modal').style.display='none'" style="padding: 10px 15px; background: #ddd; border: none; cursor: pointer; border-radius: 4px; margin-right: 10px;">Cancelar</button>
+                <button onclick="app.saveData()" class="btn-gold" style="width: auto; margin-top: 0;">Salvar</button>
             </div>
         </div>
     </div>
@@ -290,37 +344,35 @@
             data: {
                 irmaos: [],
                 graus: ['Aprendiz', 'Companheiro', 'Mestre', 'Mestre Instalado'],
-                sessoes: ['Sessão Magna de Iniciação', 'Sessão Ordinária', 'Sessão Branca', 'Banquete Ritualístico'],
+                sessoes: ['Sessão Magna de Iniciação', 'Sessão Ordinária', 'Sessão Branca', 'Banquete Ritualístico', 'Sessão Econômica'],
                 potencias: ['GOB - Grande Oriente do Brasil', 'GLMERGS', 'GORGS'],
                 obreiros: ['Secretário da Loja', 'Irmão Secretário Ad Hoc']
             },
             currentModalContext: '',
 
             init: function() {
-                // Carregar dados do LocalStorage ou usar padrão
-                const savedData = localStorage.getItem('monteSinaiDB');
+                const savedData = localStorage.getItem('monteSinaiDB_v2');
                 if (savedData) {
                     this.data = JSON.parse(savedData);
+                } else {
+                    this.saveToStorage();
                 }
                 
-                // Verificar Login
                 if (sessionStorage.getItem('logged') === 'true') {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('app').style.display = 'block';
                     this.renderFilters();
                     this.populateSelects();
-                    // Set data de hoje
-                    document.getElementById('inputData').valueAsDate = new Date();
+                    const today = new Date();
+                    document.getElementById('inputData').valueAsDate = today;
                     this.updateCert();
                 }
-
-                // Renderizar letras A-Z
                 this.renderFilters();
             },
 
             login: function(e) {
                 e.preventDefault();
-                const user = document.getElementById('user').value;
+                const user = document.getElementById('user').value.toLowerCase();
                 const pass = document.getElementById('pass').value;
 
                 if ((user === 'admin' && pass === 'admin') || (user === 'user' && pass === 'user')) {
@@ -338,7 +390,7 @@
             },
 
             saveToStorage: function() {
-                localStorage.setItem('monteSinaiDB', JSON.stringify(this.data));
+                localStorage.setItem('monteSinaiDB_v2', JSON.stringify(this.data));
             },
 
             populateSelects: function(filterLetter = null) {
@@ -347,11 +399,15 @@
                 this.fillSelect('inputPotencia', this.data.potencias);
                 this.fillSelect('inputObreiro', this.data.obreiros);
 
-                // Irmãos com filtro
-                const irmaosList = filterLetter 
-                    ? this.data.irmaos.filter(i => i.toUpperCase().startsWith(filterLetter))
-                    : this.data.irmaos;
-                
+                let irmaosList = this.data.irmaos;
+                if (filterLetter) {
+                    irmaosList = this.data.irmaos.filter(i => i.toUpperCase().startsWith(filterLetter));
+                    document.querySelectorAll('.letter-filter button').forEach(b => b.classList.remove('active'));
+                    const btn = Array.from(document.querySelectorAll('.letter-filter button')).find(b => b.innerText === filterLetter);
+                    if(btn) btn.classList.add('active');
+                } else {
+                    document.querySelectorAll('.letter-filter button').forEach(b => b.classList.remove('active'));
+                }
                 this.fillSelect('inputIrmao', irmaosList.sort());
             },
 
@@ -365,12 +421,12 @@
                     opt.textContent = item;
                     select.appendChild(opt);
                 });
-                select.value = currentVal; // Tenta manter seleção
+                if(array.includes(currentVal)) select.value = currentVal;
             },
 
             renderFilters: function() {
                 const container = document.getElementById('letter-filters');
-                container.innerHTML = '<button onclick="app.populateSelects()">Todos</button>';
+                container.innerHTML = '<button onclick="app.populateSelects()" style="width: 100%; margin-bottom: 5px;">Todos</button>';
                 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
                 alphabet.forEach(letter => {
                     container.innerHTML += `<button onclick="app.populateSelects('${letter}')">${letter}</button>`;
@@ -378,13 +434,13 @@
             },
 
             openModal: function(context) {
-                // Verifica permissão (apenas visual, lógica simples)
                 if (sessionStorage.getItem('role') !== 'admin') {
-                    alert('Apenas administradores podem adicionar novos registros.');
+                    alert('⚠️ Acesso Negado\nApenas Administradores podem adicionar novos registros.');
                     return;
                 }
                 this.currentModalContext = context;
-                document.getElementById('modalTitle').textContent = 'Adicionar em ' + context.charAt(0).toUpperCase() + context.slice(1);
+                const titleMap = { 'irmaos': 'Novo Irmão', 'graus': 'Novo Grau', 'sessoes': 'Nova Sessão', 'potencias': 'Nova Potência', 'obreiros': 'Novo Obreiro' };
+                document.getElementById('modalTitle').textContent = titleMap[context] || 'Adicionar';
                 document.getElementById('modalInput').value = '';
                 document.getElementById('modal').style.display = 'flex';
                 document.getElementById('modalInput').focus();
@@ -398,44 +454,45 @@
                         this.saveToStorage();
                         this.populateSelects();
                         document.getElementById('modal').style.display = 'none';
-                        alert('Registro salvo com sucesso!');
                     } else {
-                        alert('Este registro já existe.');
+                        alert('Este registro já existe na lista.');
                     }
                 }
             },
 
             updateCert: function() {
                 const fields = ['Irmao', 'Grau', 'Sessao', 'Potencia', 'Obreiro'];
-                
                 fields.forEach(field => {
                     const val = document.getElementById('input' + field).value;
                     const el = document.getElementById('view' + field);
                     if (el) el.textContent = val || '__________________';
-                    
-                    // Assinatura especial para o Obreiro
-                    if (field === 'Obreiro') {
-                        document.getElementById('viewObreiroSign').textContent = val || 'Secretário';
-                    }
+                    if (field === 'Obreiro') document.getElementById('viewObreiroSign').textContent = val || 'Secretário';
                 });
 
-                const dataVal = document.getElementById('inputData').value;
-                if (dataVal) {
-                    const [ano, mes, dia] = dataVal.split('-');
-                    document.getElementById('viewData').textContent = `${dia}/${mes}/${ano}`;
+                const dataInput = document.getElementById('inputData').value;
+                if (dataInput) {
+                    const [ano, mes, dia] = dataInput.split('-');
+                    const dateObj = new Date(ano, mes - 1, dia);
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    document.getElementById('viewData').textContent = dateObj.toLocaleDateString('pt-BR', options);
                 } else {
-                    document.getElementById('viewData').textContent = '__/__/____';
+                    document.getElementById('viewData').textContent = '__ de ________ de ____';
                 }
             },
 
             resetForm: function() {
-                document.querySelectorAll('select').forEach(s => s.value = '');
-                this.updateCert();
+                if(confirm("Deseja limpar todos os campos?")) {
+                    document.querySelectorAll('select').forEach(s => s.value = '');
+                    this.updateCert();
+                }
             }
         };
 
-        // Inicializar
         document.addEventListener('DOMContentLoaded', () => app.init());
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) modal.style.display = "none";
+        }
     </script>
 </body>
 </html>
