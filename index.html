@@ -3,1503 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monte Sinai - Sistema de Certificados</title>
+    <title>Monte Sinai - Emissão de Certificados</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #1a472a;
-            --primary-light: #2a5c3a;
-            --primary-dark: #0f2f1d;
-            --secondary: #d4a574;
-            --secondary-light: #e4b584;
-            --secondary-dark: #c49564;
-            --danger: #c41e3a;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --info: #3498db;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --bg: #f5f7fa;
-            --card-bg: #ffffff;
-            --text-primary: #1a1a1a;
-            --text-secondary: #6b7280;
-            --border: #e5e7eb;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
-            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --primary: #0a1f44; /* Azul Marinho Profundo */
+            --gold: #c5a059;    /* Dourado Maçônico */
+            --gold-light: #e5c585;
+            --bg: #f4f4f4;
+            --white: #ffffff;
+            --danger: #8b0000;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Lato', sans-serif;
             background: var(--bg);
-            color: var(--text-primary);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* MODERN LOGIN */
-        .login-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            background: linear-gradient(135deg, #1a472a 0%, #2a5c3a 50%, #3a6c4a 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-screen::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(212, 165, 116, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .login-screen::after {
-            content: '';
-            position: absolute;
-            bottom: -30%;
-            left: -5%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: float 15s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, -30px) scale(1.1); }
-        }
-
-        .login-box {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            padding: 50px 45px;
-            border-radius: 24px;
-            box-shadow: var(--shadow-xl);
-            width: 100%;
-            max-width: 440px;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .login-logo {
-            font-size: 3.5em;
-            margin-bottom: 15px;
-            display: inline-block;
-            filter: drop-shadow(0 4px 8px rgba(26, 71, 42, 0.2));
-        }
-
-        .login-header h1 {
-            color: var(--primary);
-            font-size: 1.75em;
-            margin-bottom: 8px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .login-header p {
-            color: var(--text-secondary);
-            font-size: 0.95em;
-            font-weight: 400;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 0.9em;
-            letter-spacing: 0.2px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 1em;
-            font-family: inherit;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--card-bg);
-            color: var(--text-primary);
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.1);
-            transform: translateY(-1px);
-        }
-
-        input::placeholder {
-            color: #9ca3af;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px 24px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(26, 71, 42, 0.25);
-            letter-spacing: 0.3px;
-        }
-
-        button:hover {
-            background: linear-gradient(135deg, #0f2f1d 0%, #1a472a 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(26, 71, 42, 0.35);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button.secondary {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-            width: auto;
-            margin-top: 10px;
-            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.25);
-        }
-
-        button.secondary:hover {
-            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.35);
-        }
-
-        button.danger {
-            background: linear-gradient(135deg, var(--danger) 0%, #a01830 100%);
-        }
-
-        button.danger:hover {
-            background: linear-gradient(135deg, #a01830 0%, #7f1426 100%);
-        }
-
-        button.success {
-            background: linear-gradient(135deg, var(--success) 0%, #229954 100%);
-        }
-
-        button.success:hover {
-            background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
-        }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 35px;
-            font-size: 0.85em;
-            color: var(--text-secondary);
-        }
-
-        /* APP LAYOUT */
-        .app-container {
-            display: none;
-        }
-
-        .app-container.active {
-            display: flex;
-            flex-direction: column;
+            color: #333;
             min-height: 100vh;
         }
 
-        header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            padding: 24px 32px;
-            box-shadow: var(--shadow-md);
-        }
-
-        header .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        header h1 {
-            font-size: 1.6em;
-            margin: 0;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        header .user-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            font-size: 0.9em;
-        }
-
-        header .badge {
-            background: rgba(212, 165, 116, 0.95);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85em;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        nav {
-            background: white;
-            border-bottom: 1px solid var(--border);
-            padding: 0;
-            box-shadow: var(--shadow-sm);
-            overflow-x: auto;
-        }
-
-        nav ul {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            list-style: none;
-            gap: 0;
-        }
-
-        nav button {
-            background: none;
-            color: var(--text-secondary);
-            border: none;
-            padding: 18px 24px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
-            width: auto;
-            border-bottom: 3px solid transparent;
-            margin: 0;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: none;
-            white-space: nowrap;
-        }
-
-        nav button:hover {
-            background: rgba(26, 71, 42, 0.04);
-            border-bottom-color: var(--secondary-light);
-            color: var(--primary);
-            transform: none;
-        }
-
-        nav button.active {
-            background: rgba(26, 71, 42, 0.06);
-            border-bottom-color: var(--secondary);
-            color: var(--primary);
-        }
-
-        .main-content {
-            flex: 1;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 40px 32px;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section-title {
-            color: var(--primary);
-            font-size: 2em;
-            margin-bottom: 32px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            position: relative;
-            padding-bottom: 16px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--secondary) 0%, var(--secondary-light) 100%);
-            border-radius: 2px;
-        }
-
-        /* GRID */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .grid-2 {
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        }
-
-        /* CARD */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-4px);
-            border-color: rgba(212, 165, 116, 0.3);
-        }
-
-        .card-title {
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 20px;
-            font-size: 1.15em;
-            letter-spacing: -0.3px;
-        }
-
-        /* CERTIFICATE PREVIEW */
-        .cert-preview {
-            background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-            border: 3px solid var(--secondary);
-            border-radius: 16px;
-            padding: 60px 50px;
-            aspect-ratio: 16 / 9;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            margin: 30px 0;
-            box-shadow: var(--shadow-lg);
-            page-break-inside: avoid;
-            font-family: 'Georgia', serif;
-        }
-
-        .cert-logo {
-            font-size: 1.6em;
-            color: var(--primary);
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .cert-title {
-            font-size: 3em;
-            color: var(--secondary);
-            font-weight: bold;
-            margin-bottom: 35px;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-        }
-
-        .cert-content {
-            font-size: 1.25em;
-            line-height: 2;
-            margin: 25px 0;
-        }
-
-        .cert-field {
-            margin: 15px 0;
-            font-weight: bold;
-        }
-
-        .cert-field-label {
-            font-weight: normal;
-            opacity: 0.75;
-        }
-
-        .cert-footer {
-            margin-top: 45px;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        /* TABLE */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-        }
-
-        table th {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            padding: 16px 18px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9em;
-            letter-spacing: 0.3px;
-        }
-
-        table td {
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9em;
-        }
-
-        table tr:hover {
-            background: rgba(26, 71, 42, 0.02);
-        }
-
-        table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* ALERTS */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            display: none;
-            border-left: 4px solid;
-            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 0.9em;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .alert.show {
-            display: block;
-        }
-
-        .alert.success {
-            background: #d4edda;
-            color: #155724;
-            border-left-color: #28a745;
-        }
-
-        .alert.error {
-            background: #f8d7da;
-            color: #721c24;
-            border-left-color: #f5c6cb;
-        }
-
-        .alert.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border-left-color: #bee5eb;
-        }
-
-        .alert.warning {
-            background: #fff3cd;
-            color: #856404;
-            border-left-color: #ffeaa7;
-        }
-
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
+        /* --- LOGIN --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #000 100%);
+            display: flex; justify-content: center; align-items: center;
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+        }
+        
+        .login-box {
+            background: var(--white); padding: 40px; border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 350px; text-align: center;
+            border-top: 5px solid var(--gold);
         }
 
-        .modal.active {
-            display: flex;
+        .login-box h2 { color: var(--primary); margin-bottom: 20px; font-family: 'Cinzel', serif; }
+        .login-box input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        .btn-gold { 
+            background: var(--gold); color: var(--primary); font-weight: bold; border: none; 
+            padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px;
+            transition: 0.3s;
+        }
+        .btn-gold:hover { background: var(--gold-light); }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        #app { display: none; }
+        
+        nav {
+            background: var(--primary); color: var(--gold); padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        nav h1 { font-family: 'Cinzel', serif; font-size: 1.5rem; }
+        
+        .nav-links button {
+            background: transparent; border: 1px solid var(--gold); color: var(--gold);
+            padding: 8px 15px; margin-left: 10px; cursor: pointer; border-radius: 4px;
+        }
+        .nav-links button:hover { background: var(--gold); color: var(--primary); }
+        .nav-links button.logout { border-color: var(--danger); color: #ff6b6b; }
+        .nav-links button.logout:hover { background: var(--danger); color: white; }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 350px 1fr; gap: 30px; }
+
+        /* --- CONTROLES ESQUERDA --- */
+        .controls { background: var(--white); padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .controls h3 { color: var(--primary); border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 20px; font-family: 'Cinzel', serif; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
+        .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        .add-btn { font-size: 0.8rem; color: var(--primary); text-decoration: underline; cursor: pointer; display: block; margin-top: 2px; text-align: right;}
+
+        .letter-filter { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; }
+        .letter-filter button { 
+            font-size: 0.7rem; padding: 2px 5px; background: #eee; border: none; cursor: pointer; 
+        }
+        .letter-filter button:hover { background: var(--gold); }
+
+        /* --- CERTIFICADO (Visualização) --- */
+        .certificate-wrapper { 
+            background: #555; padding: 40px; border-radius: 8px; 
+            display: flex; justify-content: center; align-items: center; 
         }
 
-        .modal-content {
-            background: white;
-            border-radius: 20px;
+        #certificate {
+            width: 1123px; height: 794px; /* Tamanho A4 Paisagem (aprox em pixels para tela) */
+            background: var(--white);
+            position: relative;
             padding: 40px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-xl);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            transform: scale(0.65); /* Escala para caber na tela */
+            transform-origin: top center;
+            color: #000;
+            border: 20px solid var(--primary);
         }
 
-        .modal-header {
-            color: var(--primary);
-            font-size: 1.6em;
-            font-weight: 700;
-            margin-bottom: 28px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--border);
-            letter-spacing: -0.5px;
+        /* DESIGN DO CERTIFICADO */
+        .cert-inner-border {
+            border: 5px solid var(--gold);
+            height: 100%;
+            padding: 40px;
+            position: relative;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
         }
 
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            cursor: pointer;
-            color: var(--text-secondary);
-            width: auto;
-            padding: 0;
-            transition: color 0.2s;
+        .cert-corner {
+            position: absolute; width: 60px; height: 60px;
+            border-top: 5px solid var(--gold); border-left: 5px solid var(--gold);
+        }
+        .tr { top: 10px; right: 10px; transform: rotate(90deg); }
+        .br { bottom: 10px; right: 10px; transform: rotate(180deg); }
+        .bl { bottom: 10px; left: 10px; transform: rotate(270deg); }
+        .tl { top: 10px; left: 10px; }
+
+        .cert-header h1 {
+            font-family: 'Cinzel', serif; font-size: 3rem; color: var(--primary);
+            margin-bottom: 10px; letter-spacing: 2px;
+        }
+        .cert-header h2 {
+            font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--gold);
+            text-transform: uppercase; margin-bottom: 40px;
         }
 
-        .modal-close:hover {
-            color: var(--text-primary);
+        .cert-body { font-size: 1.4rem; line-height: 2; width: 90%; margin: 0 auto; font-family: 'Playfair Display', serif; }
+        .cert-body span { 
+            font-weight: bold; color: var(--primary); border-bottom: 1px solid #999; padding: 0 10px; display: inline-block; min-width: 100px;
         }
 
-        /* SEARCH BAR */
-        .search-bar {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
+        .cert-signatures {
+            margin-top: auto; width: 100%; display: flex; justify-content: space-around; padding-bottom: 20px;
         }
+        .signature-line { width: 300px; border-top: 1px solid #000; text-align: center; padding-top: 10px; }
+        .signature-line p { font-size: 0.9rem; text-transform: uppercase; color: var(--primary); font-weight: bold; }
+        .signature-font { font-family: 'Great Vibes', cursive; font-size: 2.5rem; color: #000; margin-bottom: -10px; display: block; height: 50px;}
 
-        .search-bar input {
-            flex: 1;
-            min-width: 220px;
-        }
-
-        .search-bar button {
-            width: auto;
-            padding: 14px 28px;
-        }
-
-        /* FILTER BUTTONS */
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 24px;
-        }
-
-        .filter-buttons button {
-            width: auto;
-            padding: 10px 18px;
-            background: white;
-            color: var(--text-secondary);
-            border: 2px solid var(--border);
-            font-size: 0.85em;
-            box-shadow: none;
-            transition: all 0.3s;
-        }
-
-        .filter-buttons button.active {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .filter-buttons button:hover {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* UTILITIES */
-        .text-center { text-align: center; }
-        .mt { margin-top: 24px; }
-        .mb { margin-bottom: 24px; }
-        .flex-row { display: flex; gap: 12px; flex-wrap: wrap; }
-        .flex-center { display: flex; justify-content: center; align-items: center; }
-
-        .badge-user {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-
-        .badge-admin {
-            background: linear-gradient(135deg, var(--danger) 0%, #a01830 100%);
-            color: white;
-        }
-
-        .badge-user-type {
-            background: linear-gradient(135deg, var(--success) 0%, #229954 100%);
-            color: white;
-        }
-
-        /* STATS */
-        .stat-box {
-            background: linear-gradient(135deg, var(--card-bg) 0%, #fafbfc 100%);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stat-box:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-4px);
-        }
-
-        .stat-number {
-            font-size: 2.8em;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-        }
-
-        .stat-label {
-            font-size: 0.95em;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 24px 16px;
-            }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cert-preview {
-                padding: 30px 20px;
-                aspect-ratio: auto;
-            }
-
-            .cert-title {
-                font-size: 2em;
-            }
-
-            header .header-content {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 16px;
-            }
-
-            header h1 {
-                font-size: 1.4em;
-            }
-
-            nav ul {
-                flex-direction: column;
-            }
-
-            nav button {
-                padding: 14px 16px;
-                border-bottom: none;
-                border-left: 3px solid transparent;
-            }
-
-            nav button.active {
-                border-left-color: var(--secondary);
-                border-bottom: none;
-            }
-
-            .login-box {
-                padding: 35px 25px;
-            }
-
-            .section-title {
-                font-size: 1.6em;
-            }
-
-            .modal-content {
-                padding: 30px 20px;
-            }
-        }
-
+        /* --- MODAL --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 400px; }
+        
+        /* --- PRINT --- */
         @media print {
-            body {
-                background: white;
+            body * { visibility: hidden; }
+            #certificate, #certificate * { visibility: visible; }
+            #certificate {
+                position: fixed; left: 0; top: 0; width: 100%; height: 100%;
+                margin: 0; padding: 0; transform: none; box-shadow: none; border: 20px solid var(--primary);
             }
-
-            header, nav, .section:not(.active), button, input, label, .alert, .search-bar {
-                display: none !important;
-            }
-
-            .cert-preview {
-                border: 1px solid #000;
-                break-inside: avoid;
-            }
-
-            .main-content {
-                padding: 0;
-                max-width: 100%;
-            }
+            .certificate-wrapper { padding: 0; background: none; }
+            @page { size: landscape; margin: 0; }
         }
     </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="loginScreen" class="login-screen">
-    <div class="login-box">
-        <div class="login-header">
-            <div class="login-logo">🏛️</div>
-            <h1>Monte Sinai</h1>
-            <p>Sistema de Emissão de Certificados</p>
-        </div>
-
-        <div id="alertLogin" class="alert"></div>
-
-        <form onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label for="loginUsername">Usuário</label>
-                <input type="text" id="loginUsername" placeholder="Digite seu usuário" required autocomplete="username">
-            </div>
-
-            <div class="form-group">
-                <label for="loginPassword">Senha</label>
-                <input type="password" id="loginPassword" placeholder="Digite sua senha" required autocomplete="current-password">
-            </div>
-
-            <button type="submit">Entrar</button>
-        </form>
-
-        <div class="login-footer">
-            © 2026 Loja Maçônica Monte Sinai
+    <div id="login-screen">
+        <div class="login-box">
+            <div style="font-size: 3rem; color: var(--gold); margin-bottom: 10px;">G∴A∴D∴U∴</div>
+            <h2>Acesso Restrito</h2>
+            <form onsubmit="app.login(event)">
+                <input type="text" id="user" placeholder="Usuário" required>
+                <input type="password" id="pass" placeholder="Senha" required>
+                <button type="submit" class="btn-gold">ENTRAR</button>
+            </form>
+            <p style="margin-top:15px; font-size:0.8rem; color:#666;">Admin: admin/admin | User: user/user</p>
         </div>
     </div>
-</div>
 
-<!-- APP -->
-<div id="appContainer" class="app-container">
-    <!-- HEADER -->
-    <header>
-        <div class="header-content">
-            <h1>🏛️ Monte Sinai - Certificados</h1>
-            <div class="user-info">
-                <span id="userDisplay"></span>
-                <span id="userBadge" class="badge"></span>
-                <button id="logoutBtn" onclick="handleLogout()" class="secondary">Sair</button>
+    <div id="app">
+        <nav>
+            <h1>🏛️ Monte Sinai</h1>
+            <div class="nav-links">
+                <button onclick="window.print()">🖨️ Imprimir / PDF</button>
+                <button onclick="app.resetForm()">🧹 Limpar</button>
+                <button class="logout" onclick="app.logout()">Sair</button>
             </div>
-        </div>
-    </header>
+        </nav>
 
-    <!-- NAV -->
-    <nav>
-        <ul>
-            <li><button class="nav-btn active" data-section="certificates" onclick="switchSection('certificates')">📜 Certificados</button></li>
-            <li id="navManage" style="display:none;"><button class="nav-btn" data-section="manage" onclick="switchSection('manage')">⚙️ Gerenciar Dados</button></li>
-            <li id="navUsers" style="display:none;"><button class="nav-btn" data-section="users" onclick="switchSection('users')">👥 Usuários</button></li>
-            <li id="navReports" style="display:none;"><button class="nav-btn" data-section="reports" onclick="switchSection('reports')">📊 Relatórios</button></li>
-        </ul>
-    </nav>
+        <div class="container">
+            <div class="controls">
+                <h3>Dados do Certificado</h3>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-        <div id="globalAlert" class="alert"></div>
-
-        <!-- SECTION: CERTIFICADOS -->
-        <div id="sectionCertificates" class="section active">
-            <h2 class="section-title">📜 Emissão de Certificados</h2>
-
-            <div class="card">
-                <div class="card-title">Preencha os dados do certificado</div>
-
-                <div class="grid grid-2">
-                    <div class="form-group">
-                        <label for="certSession">Sessão</label>
-                        <input type="text" id="certSession" placeholder="Ex: Sessão Ordinária">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="certDate">Data</label>
-                        <input type="date" id="certDate">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="certRecipient">Nome do Destinatário</label>
-                        <input type="text" id="certRecipient" placeholder="Nome completo">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="certDegree">Grau Maçônico</label>
-                        <select id="certDegree">
-                            <option value="">Selecione</option>
-                            <option value="Aprendiz">Aprendiz</option>
-                            <option value="Companheiro">Companheiro</option>
-                            <option value="Mestre">Mestre</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label for="certActivity">Descrição da Atividade</label>
-                        <textarea id="certActivity" rows="4" placeholder="Descreva a atividade ou motivo do certificado"></textarea>
-                    </div>
+                <div class="form-group">
+                    <label>Filtrar Irmão por Inicial:</label>
+                    <div class="letter-filter" id="letter-filters">
+                        </div>
                 </div>
 
-                <div class="flex-row mt">
-                    <button onclick="generateCertificate()" class="success">Gerar Certificado</button>
-                    <button onclick="clearCertForm()" class="secondary">Limpar</button>
+                <div class="form-group">
+                    <label>Nome do Irmão:</label>
+                    <select id="inputIrmao" onchange="app.updateCert()"></select>
+                    <small class="add-btn" onclick="app.openModal('irmaos')">+ Adicionar Novo</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Grau:</label>
+                    <select id="inputGrau" onchange="app.updateCert()"></select>
+                    <small class="add-btn" onclick="app.openModal('graus')">+ Adicionar Novo</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Sessão:</label>
+                    <select id="inputSessao" onchange="app.updateCert()"></select>
+                    <small class="add-btn" onclick="app.openModal('sessoes')">+ Adicionar Nova</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Potência:</label>
+                    <select id="inputPotencia" onchange="app.updateCert()"></select>
+                    <small class="add-btn" onclick="app.openModal('potencias')">+ Adicionar Nova</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Data:</label>
+                    <input type="date" id="inputData" onchange="app.updateCert()">
+                </div>
+
+                <div class="form-group">
+                    <label>Obreiro (Assina como Secretário):</label>
+                    <select id="inputObreiro" onchange="app.updateCert()"></select>
+                    <small class="add-btn" onclick="app.openModal('obreiros')">+ Adicionar Novo</small>
                 </div>
             </div>
 
-            <div id="certPreviewContainer" style="display:none;">
-                <div class="cert-preview" id="certPreview">
-                    <div class="cert-logo">🏛️ LOJA MAÇÔNICA MONTE SINAI</div>
-                    <div class="cert-title">CERTIFICADO</div>
-                    <div class="cert-content">
-                        <p>Certificamos que</p>
-                        <div class="cert-field" id="previewRecipient">NOME DO DESTINATÁRIO</div>
-                        <p class="cert-field-label">Grau: <span class="cert-field" id="previewDegree">-</span></p>
-                        <p id="previewActivity" style="margin: 20px 0;">Participou da atividade...</p>
-                        <p class="cert-field-label">Sessão: <span id="previewSession">-</span></p>
-                        <p class="cert-field-label">Data: <span id="previewDate">-</span></p>
-                    </div>
-                    <div class="cert-footer">
-                        Monte Sinai - Loja Maçônica<br>
-                        Niterói, Rio Grande do Sul, Brasil
-                    </div>
-                </div>
+            <div class="certificate-wrapper">
+                <div id="certificate">
+                    <div class="cert-inner-border">
+                        <div class="cert-corner tl"></div>
+                        <div class="cert-corner tr"></div>
+                        <div class="cert-corner bl"></div>
+                        <div class="cert-corner br"></div>
 
-                <div class="text-center mt">
-                    <button onclick="printCertificate()" class="success">🖨️ Imprimir Certificado</button>
-                    <button onclick="saveCertificate()" class="success">💾 Salvar Certificado</button>
-                </div>
-            </div>
-        </div>
+                        <div class="cert-header">
+                            <div style="font-size: 4rem; color: var(--gold); margin-bottom: 10px;">G∴</div>
+                            <h1>Loja Maçônica Monte Sinai</h1>
+                            <h2>Certificado de Presença</h2>
+                        </div>
 
-        <!-- SECTION: GERENCIAR DADOS -->
-        <div id="sectionManage" class="section">
-            <h2 class="section-title">⚙️ Gerenciar Dados</h2>
+                        <div class="cert-body">
+                            <p>
+                                Certificamos que o Irmão <span id="viewIrmao">Nome do Irmão</span>, 
+                                detentor do Grau <span id="viewGrau">Grau</span>, 
+                                esteve presente na <span id="viewSessao">Tipo da Sessão</span>, 
+                                realizada sob os auspícios da Potência <span id="viewPotencia">Potência</span>.
+                            </p>
+                            <p style="margin-top: 20px;">
+                                Porto Alegre, <span id="viewData">__/__/____</span>.
+                            </p>
+                        </div>
 
-            <div class="grid">
-                <div class="card">
-                    <div class="card-title">Exportar Certificados</div>
-                    <p class="mb">Baixe todos os certificados em formato JSON ou CSV.</p>
-                    <div class="flex-row">
-                        <button onclick="exportData('json')">Exportar JSON</button>
-                        <button onclick="exportData('csv')">Exportar CSV</button>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">Importar Certificados</div>
-                    <p class="mb">Importe certificados de um arquivo JSON.</p>
-                    <input type="file" id="importFile" accept=".json" style="margin-bottom: 15px;">
-                    <button onclick="importData()">Importar Dados</button>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">Limpar Banco de Dados</div>
-                    <p class="mb">Atenção: Esta ação é irreversível!</p>
-                    <button onclick="clearDatabase()" class="danger">Limpar Todos os Dados</button>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">Configurações do Sistema</div>
-                    <p class="mb">Configure preferências do sistema.</p>
-                    <button class="secondary">Em Desenvolvimento</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECTION: USUÁRIOS -->
-        <div id="sectionUsers" class="section">
-            <h2 class="section-title">👥 Gerenciamento de Usuários</h2>
-
-            <div class="card mb">
-                <div class="card-title">Adicionar Novo Usuário</div>
-                <div class="grid grid-2">
-                    <div class="form-group">
-                        <label for="newUsername">Nome de Usuário</label>
-                        <input type="text" id="newUsername" placeholder="usuário">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="newPassword">Senha</label>
-                        <input type="password" id="newPassword" placeholder="••••••••">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="newRole">Função</label>
-                        <select id="newRole">
-                            <option value="user">Usuário</option>
-                            <option value="admin">Administrador</option>
-                        </select>
+                        <div class="cert-signatures">
+                            <div class="signature-line">
+                                <span class="signature-font">Venerável Mestre</span>
+                                <p>Venerável Mestre</p>
+                            </div>
+                            <div class="signature-line">
+                                <span class="signature-font" id="viewObreiroSign">Secretário</span>
+                                <p>Secretário / Obreiro</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <button onclick="addUser()" class="success mt">Adicionar Usuário</button>
-            </div>
-
-            <div class="card">
-                <div class="card-title">Usuários do Sistema</div>
-                <table id="usersTable">
-                    <thead>
-                        <tr>
-                            <th>Usuário</th>
-                            <th>Função</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- SECTION: RELATÓRIOS -->
-        <div id="sectionReports" class="section">
-            <h2 class="section-title">📊 Relatórios e Estatísticas</h2>
-
-            <div class="grid">
-                <div class="stat-box">
-                    <div class="stat-number" id="statTotal">0</div>
-                    <div class="stat-label">Total de Certificados</div>
-                </div>
-
-                <div class="stat-box">
-                    <div class="stat-number" id="statUsers">0</div>
-                    <div class="stat-label">Usuários Cadastrados</div>
-                </div>
-
-                <div class="stat-box">
-                    <div class="stat-number" id="statMonth">0</div>
-                    <div class="stat-label">Certificados este Mês</div>
-                </div>
-            </div>
-
-            <div class="card mt">
-                <div class="card-title">Pesquisar Certificados</div>
-
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Buscar por nome, grau, sessão...">
-                    <button onclick="searchCertificates()">🔍 Buscar</button>
-                </div>
-
-                <div class="filter-buttons">
-                    <button class="active" onclick="filterByDegree('all')">Todos</button>
-                    <button onclick="filterByDegree('Aprendiz')">Aprendiz</button>
-                    <button onclick="filterByDegree('Companheiro')">Companheiro</button>
-                    <button onclick="filterByDegree('Mestre')">Mestre</button>
-                </div>
-
-                <table id="reportsTable">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Destinatário</th>
-                            <th>Grau</th>
-                            <th>Sessão</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
             </div>
         </div>
     </div>
-</div>
-
-<script>
-// ========== STORAGE ==========
-const STORAGE_KEYS = {
-    certificates: 'montesinai_certificates',
-    users: 'montesinai_users',
-    currentUser: 'montesinai_current_user'
-};
-
-// ========== INIT ==========
-function initApp() {
-    // Initialize users if not exist
-    if (!localStorage.getItem(STORAGE_KEYS.users)) {
-        const defaultUsers = [
-            { username: 'admin', password: 'admin', role: 'admin' },
-            { username: 'user', password: 'user', role: 'user' }
-        ];
-        localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(defaultUsers));
-    }
-
-    // Initialize certificates if not exist
-    if (!localStorage.getItem(STORAGE_KEYS.certificates)) {
-        localStorage.setItem(STORAGE_KEYS.certificates, JSON.stringify([]));
-    }
-
-    // Check if user is logged in
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-        showApp(currentUser);
-    } else {
-        showLogin();
-    }
-}
-
-// ========== AUTH ==========
-function getCurrentUser() {
-    const userStr = localStorage.getItem(STORAGE_KEYS.currentUser);
-    return userStr ? JSON.parse(userStr) : null;
-}
-
-function showLogin() {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appContainer').classList.remove('active');
-}
-
-function showApp(user) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appContainer').classList.add('active');
-
-    document.getElementById('userDisplay').textContent = user.username;
-    document.getElementById('userBadge').textContent = user.role === 'admin' ? 'Administrador' : 'Usuário';
-
-    // Show/hide admin sections
-    if (user.role === 'admin') {
-        document.getElementById('navManage').style.display = 'block';
-        document.getElementById('navUsers').style.display = 'block';
-        document.getElementById('navReports').style.display = 'block';
-    } else {
-        document.getElementById('navManage').style.display = 'none';
-        document.getElementById('navUsers').style.display = 'none';
-        document.getElementById('navReports').style.display = 'block';
-    }
-
-    loadReports();
-}
-
-function handleLogin(event) {
-    event.preventDefault();
-
-    const username = document.getElementById('loginUsername').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users));
-    const user = users.find(u => u.username === username && u.password === password);
-
-    if (user) {
-        localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(user));
-        showAlert('alertLogin', 'Login realizado com sucesso!', 'success');
-        setTimeout(() => {
-            showApp(user);
-        }, 500);
-    } else {
-        showAlert('alertLogin', 'Usuário ou senha incorretos!', 'error');
-    }
-}
-
-function handleLogout() {
-    if (confirm('Deseja realmente sair?')) {
-        localStorage.removeItem(STORAGE_KEYS.currentUser);
-        showLogin();
-        showAlert('alertLogin', 'Logout realizado com sucesso!', 'info');
-    }
-}
-
-// ========== NAVIGATION ==========
-function switchSection(sectionName) {
-    // Update nav buttons
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
-
-    // Update sections
-    document.querySelectorAll('.section').forEach(section => {
-        section.classList.remove('active');
-    });
-    document.getElementById(`section${capitalize(sectionName)}`).classList.add('active');
-
-    // Load section data
-    if (sectionName === 'reports') {
-        loadReports();
-    } else if (sectionName === 'users') {
-        loadUsers();
-    }
-}
-
-// ========== CERTIFICATES ==========
-function generateCertificate() {
-    const session = document.getElementById('certSession').value.trim();
-    const date = document.getElementById('certDate').value;
-    const recipient = document.getElementById('certRecipient').value.trim();
-    const degree = document.getElementById('certDegree').value;
-    const activity = document.getElementById('certActivity').value.trim();
-
-    if (!session || !date || !recipient || !degree || !activity) {
-        showAlert('globalAlert', 'Por favor, preencha todos os campos!', 'warning');
-        return;
-    }
-
-    // Update preview
-    document.getElementById('previewSession').textContent = session;
-    document.getElementById('previewDate').textContent = new Date(date).toLocaleDateString('pt-BR');
-    document.getElementById('previewRecipient').textContent = recipient.toUpperCase();
-    document.getElementById('previewDegree').textContent = degree;
-    document.getElementById('previewActivity').textContent = activity;
-
-    document.getElementById('certPreviewContainer').style.display = 'block';
-    document.getElementById('certPreviewContainer').scrollIntoView({ behavior: 'smooth' });
-
-    showAlert('globalAlert', 'Certificado gerado com sucesso!', 'success');
-}
-
-function clearCertForm() {
-    document.getElementById('certSession').value = '';
-    document.getElementById('certDate').value = '';
-    document.getElementById('certRecipient').value = '';
-    document.getElementById('certDegree').value = '';
-    document.getElementById('certActivity').value = '';
-    document.getElementById('certPreviewContainer').style.display = 'none';
-}
-
-function printCertificate() {
-    window.print();
-}
-
-function saveCertificate() {
-    const cert = {
-        id: Date.now(),
-        session: document.getElementById('certSession').value.trim(),
-        date: document.getElementById('certDate').value,
-        recipient: document.getElementById('certRecipient').value.trim(),
-        degree: document.getElementById('certDegree').value,
-        activity: document.getElementById('certActivity').value.trim(),
-        createdBy: getCurrentUser().username,
-        createdAt: new Date().toISOString()
-    };
-
-    const certificates = JSON.parse(localStorage.getItem(STORAGE_KEYS.certificates));
-    certificates.push(cert);
-    localStorage.setItem(STORAGE_KEYS.certificates, JSON.stringify(certificates));
-
-    showAlert('globalAlert', 'Certificado salvo no banco de dados!', 'success');
-    clearCertForm();
-}
-
-// ========== REPORTS ==========
-function loadReports() {
-    const certificates = JSON.parse(localStorage.getItem(STORAGE_KEYS.certificates));
-    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users));
-
-    // Stats
-    document.getElementById('statTotal').textContent = certificates.length;
-    document.getElementById('statUsers').textContent = users.length;
-
-    // This month
-    const now = new Date();
-    const thisMonth = certificates.filter(cert => {
-        const certDate = new Date(cert.date);
-        return certDate.getMonth() === now.getMonth() && certDate.getFullYear() === now.getFullYear();
-    });
-    document.getElementById('statMonth').textContent = thisMonth.length;
-
-    // Table
-    renderReportsTable(certificates);
-}
-
-function renderReportsTable(certificates) {
-    const tbody = document.querySelector('#reportsTable tbody');
-    tbody.innerHTML = '';
-
-    if (certificates.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 30px; color: #999;">Nenhum certificado encontrado</td></tr>';
-        return;
-    }
-
-    certificates.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(cert => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${new Date(cert.date).toLocaleDateString('pt-BR')}</td>
-            <td>${cert.recipient}</td>
-            <td>${cert.degree}</td>
-            <td>${cert.session}</td>
-            <td>
-                <button onclick="viewCertificate(${cert.id})" class="secondary" style="padding: 6px 12px; font-size: 0.85em;">Ver</button>
-                <button onclick="deleteCertificate(${cert.id})" class="danger" style="padding: 6px 12px; font-size: 0.85em;">Excluir</button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-function searchCertificates() {
-    const query = document.getElementById('searchInput').value.toLowerCase().trim();
-    const certificates = JSON.parse(localStorage.getItem(STORAGE_KEYS.certificates));
-
-    if (!query) {
-        renderReportsTable(certificates);
-        return;
-    }
-
-    const filtered = certificates.filter(cert =>
-        cert.recipient.toLowerCase().includes(query) ||
-        cert.degree.toLowerCase().includes(query) ||
-        cert.session.toLowerCase().includes(query) ||
-        cert.activity.toLowerCase().includes(query)
-    );
-
-    renderReportsTable(filtered);
-}
-
-function filterByDegree(degree) {
-    // Update active button
-    document.querySelectorAll('.filter-buttons button').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
-
-    const certificates = JSON.parse(localStorage.getItem(STORAGE_KEYS.certificates));
-
-    if (degree === 'all') {
-        renderReportsTable(certificates);
-    } else {
-        const filtered = certificates.filter(cert => cert.degree === degree);
-        renderReportsTable(filtered);
-    }
-}
-
-function viewCertificate(id) {
-    const certificates = JSON.parse(localStorage.getItem(STORAGE_KEYS.certificates));
-    const cert = certificates.find(c => c.id === id);
-
-    if (cert) {
-        document.getElementById('certSession').value = cert.session;
-        document.getElementById('certDate').value = cert.date;
-        document.getElementById('certRecipient').value = cert.recipient;
-        document.getElementById('certDegree').value = cert.degree;
-        document.getElementById('certActivity').value = cert.activity;
-
-        switchSection('certificates');
-        generateCertificate();
-    }
-}
-
-function deleteCertificate(id) {
-    if (confirm('Deseja realmente excluir este certificado?')) {
-        let certificates = JSON.parse(localStorage.getItem(STORAGE_KEYS.certificates));
-        certificates = certificates.filter(c => c.id !== id);
-        localStorage.setItem(STORAGE_KEYS.certificates, JSON.stringify(certificates));
-
-        showAlert('globalAlert', 'Certificado excluído com sucesso!', 'success');
-        loadReports();
-    }
-}
-
-// ========== USERS ==========
-function loadUsers() {
-    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users));
-    const tbody = document.querySelector('#usersTable tbody');
-    tbody.innerHTML = '';
-
-    users.forEach(user => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${user.username}</td>
-            <td><span class="badge-user ${user.role === 'admin' ? 'badge-admin' : 'badge-user-type'}">${user.role === 'admin' ? 'Administrador' : 'Usuário'}</span></td>
-            <td>
-                ${user.username !== 'admin' ? `<button onclick="deleteUser('${user.username}')" class="danger" style="padding: 6px 12px; font-size: 0.85em;">Excluir</button>` : '<span style="color: #999;">Protegido</span>'}
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-function addUser() {
-    const username = document.getElementById('newUsername').value.trim();
-    const password = document.getElementById('newPassword').value;
-    const role = document.getElementById('newRole').value;
-
-    if (!username || !password) {
-        showAlert('globalAlert', 'Preencha usuário e senha!', 'warning');
-        return;
-    }
-
-    const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users));
-
-    if (users.find(u => u.username === username)) {
-        showAlert('globalAlert', 'Usuário já existe!', 'error');
-        return;
-    }
-
-    users.push({ username, password, role });
-    localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
-
-    document.getElementById('newUsername').value = '';
-    document.getElementById('newPassword').value = '';
-    document.getElementById('newRole').value = 'user';
-
-    showAlert('globalAlert', 'Usuário adicionado com sucesso!', 'success');
-    loadUsers();
-}
-
-function deleteUser(username) {
-    if (username === 'admin') {
-        showAlert('globalAlert', 'Não é possível excluir o usuário admin!', 'error');
-        return;
-    }
-
-    if (confirm(`Deseja realmente excluir o usuário "${username}"?`)) {
-        let users = JSON.parse(localStorage.getItem(STORAGE_KEYS.users));
-        users = users.filter(u => u.username !== username);
-        localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
-
-        showAlert('globalAlert', 'Usuário excluído com sucesso!', 'success');
-        loadUsers();
-    }
-}
-
-// ========== DATA MANAGEMENT ==========
-function exportData(format) {
-    const certificates = JSON.parse(localStorage.getItem(STORAGE_KEYS.certificates));
-
-    if (certificates.length === 0) {
-        showAlert('globalAlert', 'Não há certificados para exportar!', 'warning');
-        return;
-    }
-
-    let content, filename, type;
-
-    if (format === 'json') {
-        content = JSON.stringify(certificates, null, 2);
-        filename = `certificados_${new Date().toISOString().split('T')[0]}.json`;
-        type = 'application/json';
-    } else if (format === 'csv') {
-        const headers = ['ID', 'Data', 'Destinatário', 'Grau', 'Sessão', 'Atividade', 'Criado Por', 'Criado Em'];
-        const rows = certificates.map(cert => [
-            cert.id,
-            new Date(cert.date).toLocaleDateString('pt-BR'),
-            cert.recipient,
-            cert.degree,
-            cert.session,
-            `"${cert.activity}"`,
-            cert.createdBy,
-            new Date(cert.createdAt).toLocaleString('pt-BR')
-        ]);
-
-        content = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-        filename = `certificados_${new Date().toISOString().split('T')[0]}.csv`;
-        type = 'text/csv;charset=utf-8;';
-    }
-
-    const blob = new Blob([content], { type });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-
-    showAlert('globalAlert', 'Dados exportados com sucesso!', 'success');
-}
-
-function importData() {
-    const file = document.getElementById('importFile').files[0];
-
-    if (!file) {
-        showAlert('globalAlert', 'Selecione um arquivo para importar!', 'warning');
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const imported = JSON.parse(e.target.result);
-
-            if (!Array.isArray(imported)) {
-                throw new Error('Formato inválido');
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Adicionar</h3>
+            <input type="text" id="modalInput" style="width: 100%; padding: 10px; margin: 15px 0;" placeholder="Digite o nome...">
+            <div style="text-align: right;">
+                <button onclick="document.getElementById('modal').style.display='none'" style="padding: 8px 15px;">Cancelar</button>
+                <button onclick="app.saveData()" class="btn-gold" style="width: auto;">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            data: {
+                irmaos: [],
+                graus: ['Aprendiz', 'Companheiro', 'Mestre', 'Mestre Instalado'],
+                sessoes: ['Sessão Magna de Iniciação', 'Sessão Ordinária', 'Sessão Branca', 'Banquete Ritualístico'],
+                potencias: ['GOB - Grande Oriente do Brasil', 'GLMERGS', 'GORGS'],
+                obreiros: ['Secretário da Loja', 'Irmão Secretário Ad Hoc']
+            },
+            currentModalContext: '',
+
+            init: function() {
+                // Carregar dados do LocalStorage ou usar padrão
+                const savedData = localStorage.getItem('monteSinaiDB');
+                if (savedData) {
+                    this.data = JSON.parse(savedData);
+                }
+                
+                // Verificar Login
+                if (sessionStorage.getItem('logged') === 'true') {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('app').style.display = 'block';
+                    this.renderFilters();
+                    this.populateSelects();
+                    // Set data de hoje
+                    document.getElementById('inputData').valueAsDate = new Date();
+                    this.updateCert();
+                }
+
+                // Renderizar letras A-Z
+                this.renderFilters();
+            },
+
+            login: function(e) {
+                e.preventDefault();
+                const user = document.getElementById('user').value;
+                const pass = document.getElementById('pass').value;
+
+                if ((user === 'admin' && pass === 'admin') || (user === 'user' && pass === 'user')) {
+                    sessionStorage.setItem('logged', 'true');
+                    sessionStorage.setItem('role', user === 'admin' ? 'admin' : 'user');
+                    location.reload();
+                } else {
+                    alert('Credenciais inválidas!');
+                }
+            },
+
+            logout: function() {
+                sessionStorage.clear();
+                location.reload();
+            },
+
+            saveToStorage: function() {
+                localStorage.setItem('monteSinaiDB', JSON.stringify(this.data));
+            },
+
+            populateSelects: function(filterLetter = null) {
+                this.fillSelect('inputGrau', this.data.graus);
+                this.fillSelect('inputSessao', this.data.sessoes);
+                this.fillSelect('inputPotencia', this.data.potencias);
+                this.fillSelect('inputObreiro', this.data.obreiros);
+
+                // Irmãos com filtro
+                const irmaosList = filterLetter 
+                    ? this.data.irmaos.filter(i => i.toUpperCase().startsWith(filterLetter))
+                    : this.data.irmaos;
+                
+                this.fillSelect('inputIrmao', irmaosList.sort());
+            },
+
+            fillSelect: function(id, array) {
+                const select = document.getElementById(id);
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">Selecione...</option>';
+                array.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item;
+                    opt.textContent = item;
+                    select.appendChild(opt);
+                });
+                select.value = currentVal; // Tenta manter seleção
+            },
+
+            renderFilters: function() {
+                const container = document.getElementById('letter-filters');
+                container.innerHTML = '<button onclick="app.populateSelects()">Todos</button>';
+                const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+                alphabet.forEach(letter => {
+                    container.innerHTML += `<button onclick="app.populateSelects('${letter}')">${letter}</button>`;
+                });
+            },
+
+            openModal: function(context) {
+                // Verifica permissão (apenas visual, lógica simples)
+                if (sessionStorage.getItem('role') !== 'admin') {
+                    alert('Apenas administradores podem adicionar novos registros.');
+                    return;
+                }
+                this.currentModalContext = context;
+                document.getElementById('modalTitle').textContent = 'Adicionar em ' + context.charAt(0).toUpperCase() + context.slice(1);
+                document.getElementById('modalInput').value = '';
+                document.getElementById('modal').style.display = 'flex';
+                document.getElementById('modalInput').focus();
+            },
+
+            saveData: function() {
+                const val = document.getElementById('modalInput').value.trim();
+                if (val) {
+                    if (!this.data[this.currentModalContext].includes(val)) {
+                        this.data[this.currentModalContext].push(val);
+                        this.saveToStorage();
+                        this.populateSelects();
+                        document.getElementById('modal').style.display = 'none';
+                        alert('Registro salvo com sucesso!');
+                    } else {
+                        alert('Este registro já existe.');
+                    }
+                }
+            },
+
+            updateCert: function() {
+                const fields = ['Irmao', 'Grau', 'Sessao', 'Potencia', 'Obreiro'];
+                
+                fields.forEach(field => {
+                    const val = document.getElementById('input' + field).value;
+                    const el = document.getElementById('view' + field);
+                    if (el) el.textContent = val || '__________________';
+                    
+                    // Assinatura especial para o Obreiro
+                    if (field === 'Obreiro') {
+                        document.getElementById('viewObreiroSign').textContent = val || 'Secretário';
+                    }
+                });
+
+                const dataVal = document.getElementById('inputData').value;
+                if (dataVal) {
+                    const [ano, mes, dia] = dataVal.split('-');
+                    document.getElementById('viewData').textContent = `${dia}/${mes}/${ano}`;
+                } else {
+                    document.getElementById('viewData').textContent = '__/__/____';
+                }
+            },
+
+            resetForm: function() {
+                document.querySelectorAll('select').forEach(s => s.value = '');
+                this.updateCert();
             }
+        };
 
-            const certificates = JSON.parse(localStorage.getItem(STORAGE_KEYS.certificates));
-            const merged = [...certificates, ...imported];
-            localStorage.setItem(STORAGE_KEYS.certificates, JSON.stringify(merged));
-
-            showAlert('globalAlert', `${imported.length} certificados importados com sucesso!`, 'success');
-            document.getElementById('importFile').value = '';
-        } catch (error) {
-            showAlert('globalAlert', 'Erro ao importar arquivo. Verifique o formato!', 'error');
-        }
-    };
-    reader.readAsText(file);
-}
-
-function clearDatabase() {
-    if (confirm('ATENÇÃO: Todos os certificados serão PERMANENTEMENTE excluídos!\n\nDeseja continuar?')) {
-        if (confirm('Esta é sua última chance. Confirma a exclusão de TODOS os dados?')) {
-            localStorage.setItem(STORAGE_KEYS.certificates, JSON.stringify([]));
-            showAlert('globalAlert', 'Banco de dados limpo com sucesso!', 'info');
-            loadReports();
-        }
-    }
-}
-
-// ========== UTILS ==========
-function showAlert(elementId, message, type) {
-    const alert = document.getElementById(elementId);
-    alert.className = `alert ${type} show`;
-    alert.textContent = message;
-
-    setTimeout(() => {
-        alert.classList.remove('show');
-    }, 5000);
-}
-
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-// ========== INIT ON LOAD ==========
-window.onload = initApp;
-</script>
-
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
 </body>
 </html>
